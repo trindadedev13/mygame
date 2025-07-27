@@ -1,5 +1,5 @@
 #include <mygame/game_main.h>
 
-int main() {
-  return mygame_main();
+int main(int argc, char* argv[]) {
+  return mygame_main(argc, argv);
 }
