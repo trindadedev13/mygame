@@ -11,12 +11,6 @@
 #include "mygame/state.h"
 
 int mygame_main(int argc, char* argv[]) {
-  if (!mygame_state_init()) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize global game state\n");
-    mygame_state_destroy();
-    return 1;
-  }
-
   mygame_scene_home_create();
 
   SDL_Event e;

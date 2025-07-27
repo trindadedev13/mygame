@@ -26,8 +26,8 @@ void mygame_render_draw_rect(struct mygame_rect, struct mygame_color);
 
 // draw a rect (outlined thickness px)
 void mygame_render_draw_rect_thickness(struct mygame_rect,
-                             struct mygame_color,
-                             int);
+                                       struct mygame_color,
+                                       int);
 
 // draw a rect (filled]
 void mygame_render_fill_rect(struct mygame_rect, struct mygame_color);

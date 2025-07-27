@@ -39,6 +39,7 @@ extensions = ["c", "h", "cpp", "hpp"]
 extensions.each do |ext|
   Dir.glob(File.join(base_dir, "**", "*.#{ext}")).each do |file|
     next if file.split(File::SEPARATOR).include?("build")
+    next if file.split(File::SEPARATOR).include?("extern")
 
     puts green("Formatted: ") + file
     run("clang-format -i \"#{file}\"")

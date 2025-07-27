@@ -8,8 +8,13 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../core
     ${CMAKE_BINARY_DIR}/core_build)
 
 add_executable(mygame
-    src/main.c)
+    src/main.c
+    src/desktop_assets_manager.c)
 
 target_link_libraries(mygame
     PRIVATE
     mygame_core)
+
+target_include_directories(mygame
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)

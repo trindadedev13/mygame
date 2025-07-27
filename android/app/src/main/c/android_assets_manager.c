@@ -1,51 +1,56 @@
-#include "android_assets_manager_jni.h"
+#include "android_assets_manager.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <jni.h>
 #include <SDL3/SDL.h>
+#include <jni.h>
 
-MyGameAssetsManagerJNI* asmgr = NULL;
+#include <mygame/assets.h>
+
+struct android_assets_manager* asmgr = NULL;
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-  asmgr = (MyGameAssetsManagerJNI*)malloc(sizeof(MyGameAssetsManagerJNI));
+  asmgr = (struct android_assets_manager*)malloc(
+      sizeof(struct android_assets_manager));
   if (!asmgr) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                 "Failed to allocate memory for MyGameAssetsManagerJNI*");
+                 "Failed to allocate memory for android_assets_manager*");
     return JNI_ERR;
   }
   asmgr->jvm = vm;
-  asmgr->o_mygame_assets_manager = NULL;
-  asmgr->c_mygame_assets_manager = NULL;
+  asmgr->o_android_assets_manager = NULL;
+  asmgr->c_android_assets_manager = NULL;
   return JNI_VERSION_1_6;
 }
 
 JNIEXPORT void JNICALL
 Java_dev_trindadedev_mygame_MyGameActivity_initAssets(JNIEnv* env,
-                                                  jclass clazz,
-                                                  jobject mgr) {
+                                               jclass clazz,
+                                               jobject mgr) {
   if (!asmgr) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                 "Failed to allocate memory for MyGameAssetsManagerJNI*");
+                 "Failed to allocate memory for android_assets_manager*");
     return;
   }
 
-  if (asmgr->o_mygame_assets_manager != NULL)
-    (*env)->DeleteGlobalRef(env, asmgr->o_mygame_assets_manager);
+  if (asmgr->o_android_assets_manager != NULL)
+    (*env)->DeleteGlobalRef(env, asmgr->o_android_assets_manager);
 
-  if (asmgr->c_mygame_assets_manager != NULL)
-    (*env)->DeleteGlobalRef(env, asmgr->c_mygame_assets_manager);
+  if (asmgr->c_android_assets_manager != NULL)
+    (*env)->DeleteGlobalRef(env, asmgr->c_android_assets_manager);
 
-  asmgr->o_mygame_assets_manager = (*env)->NewGlobalRef(env, mgr);
+  asmgr->o_android_assets_manager = (*env)->NewGlobalRef(env, mgr);
 
-  jclass localClass = (*env)->GetObjectClass(env, asmgr->o_mygame_assets_manager);
-  asmgr->c_mygame_assets_manager = (jclass)(*env)->NewGlobalRef(env, localClass);
+  jclass localClass =
+      (*env)->GetObjectClass(env, asmgr->o_android_assets_manager);
+  asmgr->c_android_assets_manager =
+      (jclass)(*env)->NewGlobalRef(env, localClass);
   (*env)->DeleteLocalRef(env, localClass);
 }
 
-static JNIEnv* MyGameAssetsManagerJNI_GetEnv() {
+static JNIEnv* jni_getenv() {
   JavaVM* jvm = asmgr->jvm;
   JNIEnv* env = NULL;
   if ((*jvm)->GetEnv(jvm, (void**)&env, JNI_VERSION_1_6) != JNI_OK) {
@@ -59,15 +64,15 @@ static JNIEnv* MyGameAssetsManagerJNI_GetEnv() {
 // Reads text file
 // Calls MyGameAssetsManager.java#readTextFile with JNI
 // The result of it need to be free!
-char* MyGameAssetsManagerJNI_ReadTextFile(const char* filepath) {
-  JNIEnv* env = MyGameAssetsManagerJNI_GetEnv();
+char* android_assets_manager_readtextfile(const char* filepath) {
+  JNIEnv* env = jni_getenv();
   if (env == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to get JNIEnv*");
     return NULL;
   }
 
   jmethodID jmethod_id =
-      (*env)->GetMethodID(env, asmgr->c_mygame_assets_manager, "readTextFile",
+      (*env)->GetMethodID(env, asmgr->c_android_assets_manager, "readTextFile",
                           "(Ljava/lang/String;)Ljava/lang/String;");
 
   if (jmethod_id == NULL) {
@@ -84,7 +89,7 @@ char* MyGameAssetsManagerJNI_ReadTextFile(const char* filepath) {
   }
 
   jstring jresult = (jstring)(*env)->CallObjectMethod(
-      env, asmgr->o_mygame_assets_manager, jmethod_id, jfilepath);
+      env, asmgr->o_android_assets_manager, jmethod_id, jfilepath);
 
   (*env)->DeleteLocalRef(env, jfilepath);
 
@@ -103,16 +108,16 @@ char* MyGameAssetsManagerJNI_ReadTextFile(const char* filepath) {
   return result_copy;
 }
 
-Int8Array* MyGameAssetsManagerJNI_ReadBinaryFile(const char* filepath) {
-  JNIEnv* env = MyGameAssetsManagerJNI_GetEnv();
+struct int8_array_t* android_assets_manager_readbinfile(const char* filepath) {
+  JNIEnv* env = jni_getenv();
   if (env == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to get JNIEnv*");
     return NULL;
   }
 
   jmethodID jmethod_id =
-      (*env)->GetMethodID(env, asmgr->c_mygame_assets_manager, "readBinaryFile",
-                          "(Ljava/lang/String;)[B");
+      (*env)->GetMethodID(env, asmgr->c_android_assets_manager,
+                          "readBinaryFile", "(Ljava/lang/String;)[B");
 
   if (jmethod_id == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -128,7 +133,7 @@ Int8Array* MyGameAssetsManagerJNI_ReadBinaryFile(const char* filepath) {
   }
 
   jbyteArray jresult = (jbyteArray)(*env)->CallObjectMethod(
-      env, asmgr->o_mygame_assets_manager, jmethod_id, jfilepath);
+      env, asmgr->o_android_assets_manager, jmethod_id, jfilepath);
 
   (*env)->DeleteLocalRef(env, jfilepath);
 
@@ -151,7 +156,7 @@ Int8Array* MyGameAssetsManagerJNI_ReadBinaryFile(const char* filepath) {
   (*env)->ReleaseByteArrayElements(env, jresult, bytes, JNI_ABORT);
   (*env)->DeleteLocalRef(env, jresult);
 
-  Int8Array* a = malloc(sizeof(Int8Array));
+  struct int8_array_t* a = malloc(sizeof(struct int8_array_t));
   a->data = cBytes;
   a->size = len;
 
@@ -160,15 +165,16 @@ Int8Array* MyGameAssetsManagerJNI_ReadBinaryFile(const char* filepath) {
 
 // Checks if an file exists
 // Calls MyGameAssetsManager.java#fileExists with JNI
-bool MyGameAssetsManagerJNI_FileExists(const char* filepath) {
-  JNIEnv* env = MyGameAssetsManagerJNI_GetEnv();
+bool android_assets_manager_file_exists(const char* filepath) {
+  JNIEnv* env = jni_getenv();
   if (env == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to get JNIEnv*");
     return false;
   }
 
-  jmethodID jmethod_id = (*env)->GetMethodID(
-      env, asmgr->c_mygame_assets_manager, "fileExists", "(Ljava/lang/String;)Z");
+  jmethodID jmethod_id =
+      (*env)->GetMethodID(env, asmgr->c_android_assets_manager, "fileExists",
+                          "(Ljava/lang/String;)Z");
 
   if (jmethod_id == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -184,7 +190,7 @@ bool MyGameAssetsManagerJNI_FileExists(const char* filepath) {
   }
 
   jboolean jresult = (jboolean)(*env)->CallBooleanMethod(
-      env, asmgr->o_mygame_assets_manager, jmethod_id, jfilepath);
+      env, asmgr->o_android_assets_manager, jmethod_id, jfilepath);
 
   (*env)->DeleteLocalRef(env, jfilepath);
 
@@ -197,18 +203,19 @@ bool MyGameAssetsManagerJNI_FileExists(const char* filepath) {
 // Returns NULL-terminated array of strings
 // To get the quantity, pass a pointer to outCount (can be NULL)
 // Calls MyGameAssetsManager.java#listFiles with JNI
-char** MyGameAssetsManagerJNI_ListFiles(const char* filepath, int* outCount) {
+char** android_assets_manager_listfiles(const char* filepath,
+                                        size_t* outCount) {
   if (outCount)
     *outCount = 0;
 
-  JNIEnv* env = MyGameAssetsManagerJNI_GetEnv();
+  JNIEnv* env = jni_getenv();
   if (env == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to get JNIEnv*");
     return NULL;
   }
 
   jmethodID jmethod_id =
-      (*env)->GetMethodID(env, asmgr->c_mygame_assets_manager, "listFiles",
+      (*env)->GetMethodID(env, asmgr->c_android_assets_manager, "listFiles",
                           "(Ljava/lang/String;)[Ljava/lang/String;");
 
   if (jmethod_id == NULL) {
@@ -224,7 +231,7 @@ char** MyGameAssetsManagerJNI_ListFiles(const char* filepath, int* outCount) {
   }
 
   jobjectArray jresult = (jobjectArray)(*env)->CallObjectMethod(
-      env, asmgr->o_mygame_assets_manager, jmethod_id, jfilepath);
+      env, asmgr->o_android_assets_manager, jmethod_id, jfilepath);
 
   (*env)->DeleteLocalRef(env, jfilepath);
 
@@ -296,11 +303,22 @@ char** MyGameAssetsManagerJNI_ListFiles(const char* filepath, int* outCount) {
 }
 
 // free the returned array when it is no longer needed
-void MyGameAssetsManagerJNI_FreeFileList(char** list, int count) {
+void android_assets_manager_freefilelist(char** list, size_t count) {
   if (!list)
     return;
-  for (int i = 0; i < count; i++) {
+  for (size_t i = 0; i < count; i++) {
     free((void*)list[i]);
   }
   free(list);
+}
+
+struct mygame_assets_manager* android_get_assets_manager() {
+  struct mygame_assets_manager* mgr =
+      malloc(sizeof(struct mygame_assets_manager));
+  mgr->read_text_file = android_assets_manager_readtextfile;
+  mgr->read_bin_file = android_assets_manager_readbinfile;
+  mgr->file_exists = android_assets_manager_file_exists;
+  mgr->list_files = android_assets_manager_listfiles;
+  mgr->free_file_list = android_assets_manager_freefilelist;
+  return mgr;
 }
