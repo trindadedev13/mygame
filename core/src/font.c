@@ -8,14 +8,14 @@
 struct mygame_fonts* mygame_fonts_loadall() {
   struct mygame_fonts* it = malloc(sizeof(struct mygame_fonts));
   if (it == NULL) {
-    perror("Failed to create mygame_window");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create mygame_window");
     return NULL;
   }
 
   it->rainyhearts =
       TTF_OpenFont("assets/rainyhearts.ttf", RAINY_HEARTS_FONTSIZE);
   if (it->rainyhearts == NULL) {
-    fprintf(stderr, "Failed to load font: %s\n", SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load font: %s\n", SDL_GetError());
     return NULL;
   }
   return it;

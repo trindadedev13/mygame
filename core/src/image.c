@@ -11,14 +11,14 @@
 struct mygame_images* mygame_images_loadall() {
   struct mygame_images* it = malloc(sizeof(struct mygame_images));
   if (it == NULL) {
-    perror("Failed to create mygame_window");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create mygame_window");
     return NULL;
   }
 
   it->background =
       IMG_LoadTexture(gbl_state->renderer, "assets/background.jpg");
   if (it->background == NULL) {
-    fprintf(stderr, "Failed to load background image %s\n", SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load background image %s\n", SDL_GetError());
     return NULL;
   }
 

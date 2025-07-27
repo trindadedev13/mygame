@@ -5,31 +5,31 @@ def run(cmd)
    system(cmd) or abort("Failed #{cmd}")
 end
 
+ARGV.each do |arg|
+  case arg
+    when "--android", "-a"
+      Dir.chdir("android") do
+        run("chmod +x gradlew")
+        run("./gradlew assembleRelease")
+      end
+      exit 0
+  end
+end
+
 FileUtils.mkdir_p("build")
 
-files = Dir.glob("src/**/*.c").join(" ")
-
-args = [
-   "#{files}",
-   "-Iinclude/",
-   "-lSDL3",
-   "-lSDL3_ttf",
-   "-lSDL3_image",
-   "-fsanitize=address",
-   "-g",
-   "-std=c23",
-   "-o build/main"
-].join(" ")
-
-run("gcc #{args}")
+Dir.chdir("desktop") do
+  run("cmake -B build .")
+  run("cmake --build build")
+end
 
 HOME = ENV["HOME"]
 ENV["DISPLAY"] = ":0"
 
-FileUtils.mkdir_p("#{HOME}/temp/c/x11_example/")
-FileUtils.cp("build/main", "#{HOME}/temp/c/x11_example/main")
+FileUtils.mkdir_p("#{HOME}/temp/c/mygame/")
+FileUtils.cp("desktop/build/mygame", "#{HOME}/temp/c/mygame/mygame")
 
-EXECUTABLE = "main"
+EXECUTABLE = "mygame"
 x11_pid = spawn("termux-x11 :0")
 
 def cleanup(x11_pid)
@@ -44,7 +44,7 @@ end
 
 sleep 5
 
-exec_path = File.expand_path("~/temp/c/x11_example/#{EXECUTABLE}")
+exec_path = File.expand_path("~/temp/c/mygame/#{EXECUTABLE}")
 File.chmod(0755, exec_path)
 
 # Executa o binário
