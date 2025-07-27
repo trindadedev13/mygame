@@ -1,3 +1,5 @@
+#include "mygame/game_main.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -8,9 +10,9 @@
 #include "mygame/scene/scene.h"
 #include "mygame/state.h"
 
-int main(int argc, char* argv[]) {
+int mygame_main() {
   if (!mygame_state_init()) {
-    fprintf(stderr, "Failed to initialize global game state\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize global game state\n");
     mygame_state_destroy();
     return 1;
   }

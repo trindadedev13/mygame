@@ -24,15 +24,19 @@ void mygame_scene_home_handle_events(SDL_Event e) {
       options[i].hovered = hovered;
       if (hovered) {
         selected_options_index = i;
+      } else {
+        selected_options_index = -1;
       }
     }
   } else if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
     // check selected option
-    if (options[selected_options_index].type == MYGAME_SCENE_HOME_OP_START) {
-      current_scene = MYGAME_SCENE_START;  // goto start game scene
-    } else if (options[selected_options_index].type ==
-               MYGAME_SCENE_HOME_OP_CONTINUE) {
-      current_scene = MYGAME_SCENE_CONTINUE;  // goto continue game scene
+    if (selected_options_index != -1) {
+      if (options[selected_options_index].type == MYGAME_SCENE_HOME_OP_START) {
+        current_scene = MYGAME_SCENE_START;  // goto start game scene
+      } else if (options[selected_options_index].type ==
+                 MYGAME_SCENE_HOME_OP_CONTINUE) {
+        current_scene = MYGAME_SCENE_CONTINUE;  // goto continue game scene
+      }
     }
   }
 }
@@ -57,7 +61,7 @@ void mygame_scene_home_draw() {
                                   (gbl_state->window->h - root_h) / 2, root_w,
                                   root_h};
 
-  mygame_render_draw_rect(root_rect, COLOR_WHITE);
+  mygame_render_draw_rect_thickness(root_rect, COLOR_WHITE, 5);
 
   float item_w = root_rect.w;
   float item_h = root_rect.h / 4;
