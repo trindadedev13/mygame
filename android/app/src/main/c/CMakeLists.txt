@@ -25,10 +25,10 @@ endif()
 
 set(SOURCES
     main.c
-    android_assets_manager_jni.c)
+    android_assets_manager.c)
 
 set(HEADERS
-    android_assets_manager_jni.h)
+    android_assets_manager.h)
 
 add_library(main
     SHARED

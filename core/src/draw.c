@@ -30,17 +30,12 @@ void mygame_render_draw_rect(struct mygame_rect rect,
 void mygame_render_draw_rect_thickness(struct mygame_rect rect,
                                        struct mygame_color color,
                                        int thickness) {
-   for (size_t i = 0; i < thickness; i++) {
-      struct mygame_rect r = {
-         rect.x - i,
-         rect.y - i,
-         rect.w + 2 * i,
-         rect.h + 2 * i
-      };
-      mygame_render_draw_rect(r, color);   // <- Aqui usamos r, não rect
-   }
+  for (size_t i = 0; i < thickness; i++) {
+    struct mygame_rect r = {rect.x - i, rect.y - i, rect.w + 2 * i,
+                            rect.h + 2 * i};
+    mygame_render_draw_rect(r, color);  // <- Aqui usamos r, não rect
+  }
 }
-
 
 void mygame_render_fill_rect(struct mygame_rect rect,
                              struct mygame_color color) {
@@ -58,10 +53,11 @@ bool mygame_render_draw_rainyhears_text(float x,
                  .b = text_color.b,
                  .a = text_color.a};
   SDL_Surface* text_surface = TTF_RenderText_Blended(
-      gbl_state->fonts->rainyhearts, text, strlen(text), c);
+      gbl_state->fonts->rainyhearts.ttf, text, strlen(text), c);
   if (text_surface == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL_Surface for draw text %s: %s\n", text,
-            SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "Failed to create SDL_Surface for draw text %s: %s\n", text,
+                 SDL_GetError());
     return false;
   }
 
@@ -69,8 +65,9 @@ bool mygame_render_draw_rainyhears_text(float x,
   SDL_Texture* text_texture =
       SDL_CreateTextureFromSurface(gbl_state->renderer, text_surface);
   if (text_texture == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL_Texture for draw text %s: %s\n", text,
-            SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "Failed to create SDL_Texture for draw text %s: %s\n", text,
+                 SDL_GetError());
     return false;
   }
 
@@ -86,18 +83,21 @@ bool mygame_render_draw_rainyhears_text(float x,
 
 bool mygame_render_mensure_rainyhears_text(char* text, int* w, int* h) {
   if (text == NULL || w == NULL || h == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "mensure_rainyhears_text: invalid params.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "mensure_rainyhears_text: invalid params.\n");
     return false;
   }
 
-  if (gbl_state == NULL || gbl_state->fonts->rainyhearts == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "mensure_rainyhears_text: not loaded font.\n");
+  if (gbl_state == NULL || gbl_state->fonts->rainyhearts.ttf == NULL) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "mensure_rainyhears_text: not loaded font.\n");
     return false;
   }
 
-  if (!TTF_GetStringSize(gbl_state->fonts->rainyhearts, text, strlen(text), w,
-                         h)) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to measure text '%s': %s\n", text, SDL_GetError());
+  if (!TTF_GetStringSize(gbl_state->fonts->rainyhearts.ttf, text, strlen(text),
+                         w, h)) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "Failed to measure text '%s': %s\n", text, SDL_GetError());
     return false;
   }
   return true;
@@ -108,7 +108,8 @@ bool mygame_render_image(enum mygame_image_t image) {
       mygame_images_get_texture_from_type(gbl_state->images, image);
 
   if (!SDL_RenderTexture(gbl_state->renderer, image_texture, NULL, NULL)) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render texture: %s\n", SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render texture: %s\n",
+                 SDL_GetError());
     return false;
   }
   return true;

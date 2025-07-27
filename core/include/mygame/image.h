@@ -9,7 +9,10 @@ enum mygame_image_t { MYGAME_IMAGE_TYPE_BACKGROUND };
 
 // stores all images used in mygame
 struct mygame_images {
-  SDL_Texture* background;
+  struct {
+    SDL_Texture* texture;
+    struct int8_array_t* bytes;
+  } background;
 };
 
 // load all images used in mygame

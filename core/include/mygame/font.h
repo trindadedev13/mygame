@@ -3,11 +3,16 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 
+#include "mygame/state.h"
+
 #define RAINY_HEARTS_FONTSIZE 35
 
 // represents the fonts used in mygame
 struct mygame_fonts {
-  TTF_Font* rainyhearts;
+  struct {
+    TTF_Font* ttf;
+    struct int8_array_t* bytes;
+  } rainyhearts;
 };
 
 // load all fonts used in mygame

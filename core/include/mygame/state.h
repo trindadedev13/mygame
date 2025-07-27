@@ -5,6 +5,7 @@
 
 #include <SDL3/SDL.h>
 
+#include "mygame/assets.h"
 #include "mygame/font.h"
 #include "mygame/window.h"
 
@@ -13,6 +14,8 @@ struct mygame_state {
   struct mygame_window* window;  // game window
   struct mygame_fonts* fonts;    // contains all fonts used in the game
   struct mygame_images* images;  // contains all images used in the game
+  struct mygame_assets_manager*
+      assets_manager;  // manage all assets (platform-dependent)
 
   SDL_Renderer* renderer;  // renderer to render, draw things
 };
@@ -21,7 +24,7 @@ struct mygame_state {
 extern struct mygame_state* gbl_state;
 
 // initializes global state
-bool mygame_state_init();
+bool mygame_state_init(struct mygame_assets_manager*);
 
 // destroys global state
 void mygame_state_destroy();
