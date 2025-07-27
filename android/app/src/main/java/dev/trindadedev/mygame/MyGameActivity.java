@@ -21,7 +21,7 @@ public final class MyGameActivity extends SDLActivity implements MyGamePadView.G
             /* rootPath = */ "");
     initAssets(asmg);
     // Set game pad listener
-    configureGamePad();
+    // configureGamePad();
   }
 
   private final void configureGamePad() {
