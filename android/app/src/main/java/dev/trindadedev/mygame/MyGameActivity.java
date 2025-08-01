@@ -6,17 +6,19 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import dev.trindadedev.nativeassets.AndroidAssetsManager;
+
 import org.libsdl.app.SDLActivity;
 
 public final class MyGameActivity extends SDLActivity implements MyGamePadView.GamePadListener {
-  private MyGameAssetsManager asmg;
+  private AndroidAssetsManager asmg;
   private MyGamePadView gpv;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     // Assets Manager JNI
-    asmg = new MyGameAssetsManager(
+    asmg = new AndroidAssetsManager(
             /* context  = */ this,
             /* rootPath = */ "");
     initAssets(asmg);
@@ -67,5 +69,5 @@ public final class MyGameActivity extends SDLActivity implements MyGamePadView.G
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
   }
 
-  public static native void initAssets(final MyGameAssetsManager assetsManager);
+  public static native void initAssets(final AndroidAssetsManager assetsManager);
 }

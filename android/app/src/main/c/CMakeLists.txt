@@ -25,7 +25,7 @@ endif()
 
 set(SOURCES
     src/main.c
-    src/android_assets_manager.c)
+    src/android_assets_manager_jni.c)
 
 add_library(main
     SHARED

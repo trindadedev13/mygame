@@ -1,4 +1,4 @@
-package dev.trindadedev.mygame;
+package dev.trindadedev.nativeassets;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -11,16 +11,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyGameAssetsManager {
+public class AndroidAssetsManager {
   private final AssetManager assetManager;
   private final String assetsRoot;
 
-  public MyGameAssetsManager(Context ctx, String root) {
+  public AndroidAssetsManager(final Context ctx, final String root) {
     this.assetManager = ctx.getAssets();
     this.assetsRoot = root;
   }
 
-  public String readTextFile(String path) {
+  public String readTextFile(final String path) {
     try {
       InputStream inputStream = assetManager.open(assetsRoot + path);
       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -36,7 +36,7 @@ public class MyGameAssetsManager {
     return "";
   }
 
-  public byte[] readBinaryFile(String path) {
+  public byte[] readBinaryFile(final String path) {
     try (InputStream inputStream = assetManager.open(assetsRoot + path);
             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       byte[] tmp = new byte[4096];
@@ -53,7 +53,7 @@ public class MyGameAssetsManager {
     }
   }
 
-  public boolean fileExists(String path) {
+  public boolean fileExists(final String path) {
     try {
       final InputStream is = assetManager.open(assetsRoot + path);
       is.close();
@@ -64,7 +64,7 @@ public class MyGameAssetsManager {
     return false;
   }
 
-  public String[] listFiles(String path) {
+  public String[] listFiles(final String path) {
     try {
       String[] files = assetManager.list(assetsRoot + path);
       if (files != null) {
