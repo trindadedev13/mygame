@@ -24,16 +24,16 @@ Possible ways to fix this:
 endif()
 
 set(SOURCES
-    main.c
-    android_assets_manager.c)
-
-set(HEADERS
-    android_assets_manager.h)
+    src/main.c
+    src/android_assets_manager.c)
 
 add_library(main
     SHARED
-    ${SOURCES}
-    ${HEADERS})
+    ${SOURCES})
+
+target_include_directories(main
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_library(log-lib log)
 
